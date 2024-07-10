@@ -30,9 +30,10 @@ Este es el backend para Map My World, una aplicación que permite explorar y rev
 
 ## Crea un archivo .env en la raíz del proyecto con la configuración necesaria, como la URL de la base de datos PostgreSQL:
 #### Nota* recuerda cambiar el usuario y contraseña, por lo general el usuario es "postgres" y la contraseña es la que utilizaste para crear al servidor
-
-* DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/mapmyworld"
-
+* POSTGRES_USER=user
+* POSTGRES_PASSWORD=password
+* POSTGRES_DB=database
+* DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
   
 # Ejecución
 ## Para ejecutar el servidor FastAPI:
@@ -49,3 +50,9 @@ Este es el backend para Map My World, una aplicación que permite explorar y rev
 
 * python -m unittest discover -s tests
 * Asegúrate de que tu servidor de base de datos esté en funcionamiento ya que el proceso utiliza la base de datos para el proceso de pruebas.
+
+# Docker:
+## Ejecuta el siguiente comando para construir y levantar los contenedores de la aplicación y la base de datos:
+* docker-compose up --build
+#### Esto construirá las imágenes de Docker y levantará los contenedores necesarios para ejecutar la aplicación y la base de datos PostgreSQL.
+#### Una vez que los contenedores estén en funcionamiento, la aplicación estará disponible en http://localhost:8000.
