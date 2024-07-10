@@ -7,7 +7,7 @@ from typing import Dict, Any
 router = APIRouter()
 
 
-@router.get("/recommendations/", response_model=Dict[str, Any])
+@router.get("/", response_model=Dict[str, Any])
 def read_recommendations(db: Session = Depends(get_db)):
     try:
         recommendations = services.get_recommendations(db)

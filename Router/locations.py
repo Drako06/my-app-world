@@ -8,7 +8,7 @@ from Services import services
 router = APIRouter()
 
 
-@router.post("/locations/", response_model=ResponseModel)
+@router.post("/", response_model=ResponseModel)
 def create_location(location: LocationCreate, db: Session = Depends(get_db)):
     try:
         response = services.create_location(db=db, location=location)

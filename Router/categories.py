@@ -8,7 +8,7 @@ from db.db_config import get_db
 router = APIRouter()
 
 
-@router.post("/categories/", response_model=ResponseModel)
+@router.post("/", response_model=ResponseModel)
 def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
     try:
         response = services.create_category(db=db, category=category)
