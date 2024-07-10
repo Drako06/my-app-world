@@ -18,7 +18,7 @@ class Location(LocationBase):
     reviews: List["LocationCategoryReviewed"] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CategoryBase(BaseModel):
@@ -34,7 +34,7 @@ class Category(CategoryBase):
     reviews: List["LocationCategoryReviewed"] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class LocationCategoryReviewedBase(BaseModel):
@@ -51,7 +51,7 @@ class LocationCategoryReviewed(LocationCategoryReviewedBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class LocationCategoryRecommendation(BaseModel):
@@ -59,7 +59,7 @@ class LocationCategoryRecommendation(BaseModel):
     category: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ResponseModel(BaseModel):
@@ -67,4 +67,4 @@ class ResponseModel(BaseModel):
     response: Any
 
     class Config:
-        orm_mode = True
+        from_attributes = True

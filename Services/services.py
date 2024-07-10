@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
+from sqlalchemy import or_, asc
 from fastapi import HTTPException, status
 from Models.models import Location, Category, LocationCategoryReviewed
 from Schemas.schemas import LocationCreate, CategoryCreate, LocationCategoryReviewedCreate
@@ -44,24 +45,21 @@ def create_location_category_reviewed(db: Session, location_category_reviewed: L
 def get_recommendations(db: Session):
     try:
         thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-
-        # Obtener combinaciones que nunca se han revisado
-        never_reviewed = db.query(Location, Category).outerjoin(
-            LocationCategoryReviewed,
-            (LocationCategoryReviewed.location_id == Location.id) &
-            (LocationCategoryReviewed.category_id == Category.id)
-        ).filter(LocationCategoryReviewed.id == None).limit(10).all()
-
-        # Si hay menos de 10 combinaciones nunca revisadas, obtener combinaciones no revisadas en los últimos 30 días
-        if len(never_reviewed) < 10:
-            reviewed = db.query(LocationCategoryReviewed).filter(
-                LocationCategoryReviewed.last_reviewed < thirty_days_ago
-            ).order_by(LocationCategoryReviewed.last_reviewed).limit(10 - len(never_reviewed)).all()
-            for review in reviewed:
-                location = db.query(Location).filter(Location.id == review.location_id).first()
-                category = db.query(Category).filter(Category.id == review.category_id).first()
-                never_reviewed.append((location, category))
-
-        return never_reviewed
+        recommendations = db.query(
+            Location, Category
+        ).join(
+            LocationCategoryReviewed, Location.id == LocationCategoryReviewed.location_id
+        ).join(
+            Category, Category.id == LocationCategoryReviewed.category_id
+        ).filter(
+            or_(
+                LocationCategoryReviewed.last_reviewed < thirty_days_ago,
+                LocationCategoryReviewed.last_reviewed.is_(None)
+            )
+        ).order_by(
+            asc(LocationCategoryReviewed.last_reviewed.isnot(None)),
+            LocationCategoryReviewed.last_reviewed
+        ).limit(10).all()
+        return recommendations
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
